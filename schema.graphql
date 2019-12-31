@@ -1,0 +1,235 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Coin {
+  id: String!
+  name: String!
+  price_usd: String!
+  symbol: String!
+}
+
+type Comment {
+  createdBy: String
+  id: ID!
+  message: String
+  talk: Talk
+}
+
+type ModelCommentConnection {
+  items: [Comment]
+  nextToken: String
+}
+
+type ModelTalkConnection {
+  items: [Talk]
+  nextToken: String
+}
+
+type Mutation {
+  createComment(condition: ModelCommentConditionInput, input: CreateCommentInput!): Comment
+  createTalk(condition: ModelTalkConditionInput, input: CreateTalkInput!): Talk
+  deleteComment(condition: ModelCommentConditionInput, input: DeleteCommentInput!): Comment
+  deleteTalk(condition: ModelTalkConditionInput, input: DeleteTalkInput!): Talk
+  updateComment(condition: ModelCommentConditionInput, input: UpdateCommentInput!): Comment
+  updateTalk(condition: ModelTalkConditionInput, input: UpdateTalkInput!): Talk
+}
+
+type Query {
+  getCoins(limit: Int, start: Int): [Coin]
+  getComment(id: ID!): Comment
+  getTalk(id: ID!): Talk
+  listComments(filter: ModelCommentFilterInput, limit: Int, nextToken: String): ModelCommentConnection
+  listTalks(filter: ModelTalkFilterInput, limit: Int, nextToken: String): ModelTalkConnection
+}
+
+type Subscription {
+  onCreateComment(createdBy: String!): Comment @aws_subscribe(mutations : ["createComment"])
+  onCreateTalk: Talk @aws_subscribe(mutations : ["createTalk"])
+  onDeleteComment(createdBy: String!): Comment @aws_subscribe(mutations : ["deleteComment"])
+  onDeleteTalk: Talk @aws_subscribe(mutations : ["deleteTalk"])
+  onUpdateComment(createdBy: String!): Comment @aws_subscribe(mutations : ["updateComment"])
+  onUpdateTalk: Talk @aws_subscribe(mutations : ["updateTalk"])
+}
+
+type Talk {
+  clientId: ID
+  comments(filter: ModelCommentFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelCommentConnection
+  description: String!
+  id: ID!
+  name: String!
+  speakerBio: String!
+  speakerName: String!
+}
+
+enum ModelAttributeTypes {
+  _null
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input CreateCommentInput {
+  commentTalkId: ID
+  createdBy: String
+  id: ID
+  message: String
+}
+
+input CreateTalkInput {
+  clientId: ID
+  description: String!
+  id: ID
+  name: String!
+  speakerBio: String!
+  speakerName: String!
+}
+
+input DeleteCommentInput {
+  id: ID
+}
+
+input DeleteTalkInput {
+  id: ID
+}
+
+input ModelBooleanInput {
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  eq: Boolean
+  ne: Boolean
+}
+
+input ModelCommentConditionInput {
+  and: [ModelCommentConditionInput]
+  message: ModelStringInput
+  not: ModelCommentConditionInput
+  or: [ModelCommentConditionInput]
+}
+
+input ModelCommentFilterInput {
+  and: [ModelCommentFilterInput]
+  createdBy: ModelStringInput
+  id: ModelIDInput
+  message: ModelStringInput
+  not: ModelCommentFilterInput
+  or: [ModelCommentFilterInput]
+}
+
+input ModelFloatInput {
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  between: [Float]
+  eq: Float
+  ge: Float
+  gt: Float
+  le: Float
+  lt: Float
+  ne: Float
+}
+
+input ModelIDInput {
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  beginsWith: ID
+  between: [ID]
+  contains: ID
+  eq: ID
+  ge: ID
+  gt: ID
+  le: ID
+  lt: ID
+  ne: ID
+  notContains: ID
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  between: [Int]
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+}
+
+input ModelSizeInput {
+  between: [Int]
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+}
+
+input ModelStringInput {
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  beginsWith: String
+  between: [String]
+  contains: String
+  eq: String
+  ge: String
+  gt: String
+  le: String
+  lt: String
+  ne: String
+  notContains: String
+  size: ModelSizeInput
+}
+
+input ModelTalkConditionInput {
+  and: [ModelTalkConditionInput]
+  clientId: ModelIDInput
+  description: ModelStringInput
+  name: ModelStringInput
+  not: ModelTalkConditionInput
+  or: [ModelTalkConditionInput]
+  speakerBio: ModelStringInput
+  speakerName: ModelStringInput
+}
+
+input ModelTalkFilterInput {
+  and: [ModelTalkFilterInput]
+  clientId: ModelIDInput
+  description: ModelStringInput
+  id: ModelIDInput
+  name: ModelStringInput
+  not: ModelTalkFilterInput
+  or: [ModelTalkFilterInput]
+  speakerBio: ModelStringInput
+  speakerName: ModelStringInput
+}
+
+input UpdateCommentInput {
+  commentTalkId: ID
+  createdBy: String
+  id: ID!
+  message: String
+}
+
+input UpdateTalkInput {
+  clientId: ID
+  description: String
+  id: ID!
+  name: String
+  speakerBio: String
+  speakerName: String
+}
