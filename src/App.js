@@ -93,16 +93,6 @@ async function CreateTalk(state, dispatch) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  useEffect(() => {
-      const subscriber = API.graphql(graphqlOperation(onCreateTalk)).subscribe({
-        next: eventData => {
-          const talk = eventData.value.data.onCreateTalk
-          if(CLIENTID === talk.clientId) return
-          dispatch({ type: "add", talk })
-        }
-      })
-    return () => subscriber.unsubscribe()
-  }, [])
 
   useEffect(() => {
     getTalks(dispatch)
