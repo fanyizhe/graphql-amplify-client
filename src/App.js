@@ -7,6 +7,9 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { listTalks} from './graphql/queries'
 import { createTalk } from './graphql/mutations'
 import { onCreateTalk } from './graphql/subscriptions'
+import  awsmobile  from './aws-exports'
+
+API.configure(awsmobile)
 
 const CLIENTID = uuid()
 
@@ -93,6 +96,16 @@ async function CreateTalk(state, dispatch) {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
+  useEffect(() => {
+    const subscriber = API.graphql(graphqlOperation(onCreateTalk)).subscribe({
+      next: eventData => {
+        const talk = eventData.value.data.onCreateTalk
+        if(CLIENTID === talk.clientId) return
+        dispatch({ type: "add", talk })
+      }
+    })
+  return () => subscriber.unsubscribe()
+}, [])
 
   useEffect(() => {
     getTalks(dispatch)
